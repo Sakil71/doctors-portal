@@ -7,7 +7,8 @@ const Footer = () => {
         <footer style={{
             background: `url(${footer})`,
             backgroundSize: 'cover'
-        }}>
+        }}
+        className='mt-10'>
             <div className='footer flex justify-around'>
                 <div>
                     <span className="footer-title">Services</span>
@@ -32,7 +33,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className='mt-20 text-center'>
-                <p>Copyright © 2022 - All right reserved by ACME Industries Ltd</p>
+                <p>Copyright © 2022 - All right reserved by DOCTORS PORTAL</p>
             </div>
         </footer>
     );

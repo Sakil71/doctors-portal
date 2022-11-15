@@ -5,12 +5,12 @@ const Header = () => {
 
     // <React.Fragment><React.Fragment/>
     const menuItem = <>
-        <Link className='mr-5 btn btn-ghost'>Home</Link>
-        <Link className='mr-5 btn btn-ghost'>Appointment</Link>
-        <Link className='mr-5 btn btn-ghost'>About</Link>
-        <Link className='mr-5 btn btn-ghost'>Reviews</Link>
-        <Link className='mr-5 btn btn-ghost'>Contact Us</Link>
-        <Link className='mr-5 btn btn-ghost'>Login</Link>
+        <Link to='/' className='mr-5 btn btn-ghost'>Home</Link>
+        <Link to='appointment' className='mr-5 btn btn-ghost'>Appointment</Link>
+        <Link to='about' className='mr-5 btn btn-ghost'>About</Link>
+        <Link to='revievs' className='mr-5 btn btn-ghost'>Reviews</Link>
+        <Link to='contact' className='mr-5 btn btn-ghost'>Contact Us</Link>
+        <Link to='login' className='mr-5 btn btn-ghost'>Login</Link>
     </>
     return (
         <div className="navbar bg-base-100 flex justify-between">
