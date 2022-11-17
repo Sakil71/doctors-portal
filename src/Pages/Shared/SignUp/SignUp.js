@@ -1,19 +1,77 @@
+// import { updateProfile } from "firebase/auth";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from "../../../context/AuthProvider";
+import toast from 'react-hot-toast';
 
 const SignUp = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
+    const {creatUser, updateUserProfile, googleLogin} = useContext(AuthContext);
 
-    const handleLogin = data => {
-        console.log(data);
+    const [signUpError, setSignUpError] = useState('');
+
+    const navigate = useNavigate();
+
+    const handleGoogle =()=>{
+        googleLogin()
+        .then(res=>{
+            const user = res.user;
+            console.log(user);
+            toast.success("Signup Successfully");
+            navigate('/');
+        })
+        .catch(err=> console.error(err));
     }
+
+    // Creat User
+    const handleSignUp = data => {
+        console.log(data);
+        setSignUpError('');
+
+        creatUser(data.email, data.password)
+        .then(res=>{
+            const user = res.user;
+            console.log(user);
+            toast.success("Signup Successfully");
+            navigate('/');
+            
+            const userInfo={
+                displayName: data.name,
+            };
+
+            updateUserProfile(userInfo)
+            .then(()=>{})
+            .catch(err=> console.error(err));
+        })
+        .catch(error=>{
+            console.error(error);
+            setSignUpError(error.message);
+        });
+    }
+
 
     return (
         <section className='h-[400px] flex justify-center items-center my-16'>
             <div>
                 <h1 className='text-4xl text-center font-bold'>Sign Up</h1>
-                <form onSubmit={handleSubmit(handleLogin)}>
+                <form onSubmit={handleSubmit(handleSignUp)}>
 
+                    {/* For Name */}
+                    <div className="form-control w-96">
+                        <label className="label"><span className="label-text">Name</span></label>
+
+                        <input {...register("name", {
+                            required: 'Name is required',
+                        })}
+                            type="text"
+                            className="input input-bordered w-full"
+                            placeholder='Your Name' />
+
+                        {errors.name && <span className="text-error mt-3">{errors.name?.message}</span>}
+                    </div>
+
+                    {/* For Email */}
                     <div className="form-control w-96">
                         <label className="label"><span className="label-text">Email</span></label>
 
@@ -33,7 +91,8 @@ const SignUp = () => {
 
                         <input {...register("password", {
                             required: "Password is required",
-                            minLength: {value: 6, message: "Password at least 6 characters"}
+                            minLength: {value: 6, message: "Password at least 6 characters"},
+                            pattern: {value: /(?=.*[A-Z])(?=.*[0-9])(?=.*[A-Z])/, message: "Password must be strong"}
                         })} type="password"
                             className="input input-bordered w-full"
                             placeholder='password' />
@@ -42,13 +101,19 @@ const SignUp = () => {
 
                     </div>
 
+                    <div>
+                        {
+                            signUpError && <p className="text-error mt-3">{signUpError} <Link className="text-secondary" to='/login'>Please Login</Link></p>
+                        }
+                    </div>
+
                     <input className='btn btn-primary mt-5 w-full' type="submit" value={"Sign Up"} />
                 </form>
 
-                <p>Already have an account? <Link className='text-secondary' to='/login'>Login</Link></p>
+                <p>Already have an account? <Link className='text-secondary' to='/login'>Please Login</Link></p>
 
-                <div className="divider">OR</div>
-                <button className='btn btn-outline w-full'>Continue With Google</button>
+                <div className="divider text-blue-500">OR</div>
+                <button onClick={handleGoogle} className='btn btn-outline w-full'>Continue With Google</button>
             </div>
         </section>
     );

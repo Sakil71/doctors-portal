@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../../context/AuthProvider';
 
 const Header = () => {
+    const {user, logOut} = useContext(AuthContext);
+
+    const handleLogOut =()=>{
+        logOut()
+        .then(()=>{})
+        .catch(err=> console.log(err));
+    }
 
     // <React.Fragment><React.Fragment/>
     const menuItem = <>
@@ -10,7 +18,19 @@ const Header = () => {
         <Link to='about' className='mr-5 btn btn-ghost'>About</Link>
         <Link to='revievs' className='mr-5 btn btn-ghost'>Reviews</Link>
         <Link to='contact' className='mr-5 btn btn-ghost'>Contact Us</Link>
-        <Link to='login' className='mr-5 btn btn-ghost'>Login</Link>
+
+        {
+            user?.uid ?
+            <>
+                <Link onClick={handleLogOut} className='mr-5 btn btn-ghost'>Logout</Link>
+
+                <Link to='/dashboard' className='mr-5 btn btn-ghost'>Dashboard</Link>            
+            </>
+            :
+            <Link to='login' className='mr-5 btn btn-ghost'>Login</Link>
+        }
+
+        <Link className='btn btn-ghost'>{user?.email}</Link>
     </>
     return (
         <div className="navbar bg-base-100 flex justify-between">

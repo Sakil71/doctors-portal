@@ -1,11 +1,34 @@
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { AuthContext } from "../../../context/AuthProvider";
 
 const Login = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
+    const {userLogin} = useContext(AuthContext);
+    const [loginError, setLoginError] = useState('');
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const from = location.state?.from?.pathname || '/';
 
     const handleLogin = data => {
         console.log(data);
+        setLoginError('');
+
+        userLogin(data.email, data.password)
+        .then(res=>{
+            const user = res.user;
+            console.log(user);
+            navigate(from, {replace: true});
+            toast.success("Login Successfull")
+        })
+        .catch(error=> {
+            console.error(error);
+            setLoginError(error.message);
+        });
     }
 
     return (
@@ -42,6 +65,12 @@ const Login = () => {
                         {errors.password && <p role="alert" className="text-error mt-4">{errors.password?.message}</p>}
 
                         <label className="label"><span className="label-text">Forget Password?</span></label>
+                    </div>
+
+                    <div>
+                        {
+                            loginError && <p className="text-error">{loginError}</p>
+                        }
                     </div>
 
                     <input className='btn btn-primary mt-5 w-full' type="submit" value={"Login"} />
