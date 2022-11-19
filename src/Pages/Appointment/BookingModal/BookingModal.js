@@ -28,7 +28,7 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
 
         // send booking data in server
         // start
-        fetch('http://localhost:5000/bookings', {
+        fetch('https://doctors-portal-server-delta.vercel.app/bookings', {
             method: "POST",
             headers: {
                 'content-type': 'application/json'
@@ -42,6 +42,10 @@ const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
                 setTreatment(null);
                 toast.success(`${name}: Booked Successfully`);
                 refetch();
+            }
+            else{
+                setTreatment(null);
+                toast.error(data?.message);
             }
         })
         // end

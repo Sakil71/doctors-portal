@@ -12,7 +12,7 @@ const AvailableDate = ({ selectedDate }) => {
     const {data: appointmentOptions = [], refetch, isLoading} = useQuery({
         queryKey: ['appointmentOptions', date],
         queryFn: async()=>{
-            const res = await fetch(`http://localhost:5000/appointment?date=${date}`);
+            const res = await fetch(`https://doctors-portal-server-delta.vercel.app/appointment?date=${date}`);
             const data  = res.json();
             return data;
         }
