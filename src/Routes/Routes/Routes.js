@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: '/appointment',
-                element: <Appointment></Appointment>
+                element: <PrivateRoutes><Appointment></Appointment></PrivateRoutes>
             },
             {
                 path: '/login',

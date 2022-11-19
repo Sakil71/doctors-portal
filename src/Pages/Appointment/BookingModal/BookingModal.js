@@ -1,8 +1,9 @@
 import { format } from 'date-fns';
 import React, { useContext } from 'react';
+import toast from 'react-hot-toast';
 import { AuthContext } from '../../../context/AuthProvider';
 
-const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
+const BookingModal = ({ treatment, selectedDate, setTreatment, refetch }) => {
     const { name, slots } = treatment;
     const date = format(selectedDate, 'PP');
     const { user } = useContext(AuthContext);
@@ -25,8 +26,25 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
             phone,
         }
 
-        console.log(booking);
-        setTreatment(null)
+        // send booking data in server
+        // start
+        fetch('http://localhost:5000/bookings', {
+            method: "POST",
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(booking)
+        })
+        .then(res=> res.json())
+        .then(data=>{
+            console.log(data);
+            if(data?.acknowledged){
+                setTreatment(null);
+                toast.success(`${name}: Booked Successfully`);
+                refetch();
+            }
+        })
+        // end
     }
 
     return (
@@ -57,9 +75,9 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
                             disabled
                             placeholder="Email Address" className="input input-bordered w-full input-warning" />
 
-                        <input name='phone' type="text" 
-                        required
-                        placeholder="Phone Number" className="input input-bordered w-full input-warning" />
+                        <input name='phone' type="text"
+                            required
+                            placeholder="Phone Number" className="input input-bordered w-full input-warning" />
 
                         <input className='btn btn-warning w-full' type="submit" value="Submit" />
                     </form>
