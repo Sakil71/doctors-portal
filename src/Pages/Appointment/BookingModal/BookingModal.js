@@ -1,11 +1,13 @@
 import { format } from 'date-fns';
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthProvider';
 
 const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
     const { name, slots } = treatment;
     const date = format(selectedDate, 'PP');
+    const { user } = useContext(AuthContext);
 
-    const handleBookingModal = event =>{
+    const handleBookingModal = event => {
         event.preventDefault();
         const form = event.target;
         const slot = form.slot.value;
@@ -14,10 +16,10 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
         const phone = form.phone.value;
         form.reset();
 
-        const booking ={
-            appointmentDate : date,
+        const booking = {
+            appointmentDate: date,
             patient: patientName,
-            treatment:name,
+            treatment: name,
             slot,
             email,
             phone,
@@ -40,16 +42,24 @@ const BookingModal = ({ treatment, selectedDate, setTreatment }) => {
 
                         <select name='slot' className="select select-bordered w-full input-warning">
                             {
-                                slots.map( (slot, i) => 
+                                slots.map((slot, i) =>
                                     <option value={slot} key={i}>{slot}</option>)
                             }
                         </select>
 
-                        <input name='name' type="text" placeholder="Your Name" className="input input-bordered w-full input-warning" />
+                        <input name='name' type="text"
+                            defaultValue={user?.displayName}
+                            readOnly
+                            placeholder="Your Name" className="input input-bordered w-full input-warning" />
 
-                        <input name='email' type="text" placeholder="Email Address" className="input input-bordered w-full input-warning" />
+                        <input name='email' type="text"
+                            defaultValue={user?.email}
+                            disabled
+                            placeholder="Email Address" className="input input-bordered w-full input-warning" />
 
-                        <input name='phone' type="text" placeholder="Phone Number" className="input input-bordered w-full input-warning" />
+                        <input name='phone' type="text" 
+                        required
+                        placeholder="Phone Number" className="input input-bordered w-full input-warning" />
 
                         <input className='btn btn-warning w-full' type="submit" value="Submit" />
                     </form>

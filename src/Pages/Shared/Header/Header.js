@@ -30,7 +30,7 @@ const Header = () => {
             <Link to='login' className='mr-5 btn btn-ghost'>Login</Link>
         }
 
-        <Link className='btn btn-ghost'>{user?.email}</Link>
+        <Link className='btn btn-ghost'>{user?.displayName}</Link>
     </>
     return (
         <div className="navbar bg-base-100 flex justify-between">

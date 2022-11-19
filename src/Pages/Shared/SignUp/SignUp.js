@@ -19,7 +19,6 @@ const SignUp = () => {
             const user = res.user;
             console.log(user);
             toast.success("Signup Successfully");
-            navigate('/');
         })
         .catch(err=> console.error(err));
     }
@@ -37,11 +36,13 @@ const SignUp = () => {
             navigate('/');
             
             const userInfo={
-                displayName: data.name,
+                displayName: data?.name,
             };
 
             updateUserProfile(userInfo)
-            .then(()=>{})
+            .then(()=>{
+                navigate('/');
+            })
             .catch(err=> console.error(err));
         })
         .catch(error=>{
