@@ -7,20 +7,21 @@ import toast from 'react-hot-toast';
 
 const SignUp = () => {
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const {creatUser, updateUserProfile, googleLogin} = useContext(AuthContext);
+    const { creatUser, updateUserProfile, googleLogin } = useContext(AuthContext);
 
     const [signUpError, setSignUpError] = useState('');
 
     const navigate = useNavigate();
 
-    const handleGoogle =()=>{
+    const handleGoogle = () => {
         googleLogin()
-        .then(res=>{
-            const user = res.user;
-            console.log(user);
-            toast.success("Signup Successfully");
-        })
-        .catch(err=> console.error(err));
+            .then(res => {
+                const user = res.user;
+                console.log(user);
+                toast.success("Signup Successfully");
+                saveUser(user?.email, user?.displayName);
+            })
+            .catch(err => console.error(err));
     }
 
     // Creat User
@@ -29,26 +30,53 @@ const SignUp = () => {
         setSignUpError('');
 
         creatUser(data.email, data.password)
-        .then(res=>{
-            const user = res.user;
-            console.log(user);
-            toast.success("Signup Successfully");
-            navigate('/');
-            
-            const userInfo={
-                displayName: data?.name,
-            };
+            .then(res => {
+                const user = res.user;
+                console.log(user);
+                toast.success("Signup Successfully");
 
-            updateUserProfile(userInfo)
-            .then(()=>{
-                navigate('/');
+                const userInfo = {
+                    displayName: data?.name,
+                };
+
+                updateUserProfile(userInfo)
+                    .then(() => {
+                        saveUser(data.email, data.name);
+                    })
+                    .catch(err => console.error(err));
             })
-            .catch(err=> console.error(err));
+            .catch(error => {
+                console.error(error);
+                setSignUpError(error.message);
+            });
+    }
+
+    const saveUser = (email, name) => {
+        const user = {email, name};
+
+        fetch('http://localhost:5000/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
         })
-        .catch(error=>{
-            console.error(error);
-            setSignUpError(error.message);
-        });
+        .then(res=> res.json())
+        .then(data=>{
+            getJwtToken(email);            
+        })
+
+    }
+
+    const getJwtToken = (email) => {
+        fetch(`http://localhost:5000/jwt?email=${email}`)
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.accesstoken){
+                localStorage.setItem('accessToken', data.accesstoken);
+                navigate('/');
+            }
+        })
     }
 
 
@@ -92,8 +120,8 @@ const SignUp = () => {
 
                         <input {...register("password", {
                             required: "Password is required",
-                            minLength: {value: 6, message: "Password at least 6 characters"},
-                            pattern: {value: /(?=.*[A-Z])(?=.*[0-9])(?=.*[A-Z])/, message: "Password must be strong"}
+                            minLength: { value: 6, message: "Password at least 6 characters" },
+                            pattern: { value: /(?=.*[A-Z])(?=.*[0-9])(?=.*[A-Z])/, message: "Password must be strong" }
                         })} type="password"
                             className="input input-bordered w-full"
                             placeholder='password' />
