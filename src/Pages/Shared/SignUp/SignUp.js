@@ -63,7 +63,8 @@ const SignUp = () => {
         })
         .then(res=> res.json())
         .then(data=>{
-            getJwtToken(email);            
+            getJwtToken(email);   
+            navigate('/');
         })
 
     }
