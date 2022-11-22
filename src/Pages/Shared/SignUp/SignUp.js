@@ -54,7 +54,7 @@ const SignUp = () => {
     const saveUser = (email, name) => {
         const user = {email, name};
 
-        fetch('http://localhost:5000/users', {
+        fetch('https://doctors-portal-server-delta.vercel.app/users', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -70,7 +70,7 @@ const SignUp = () => {
     }
 
     const getJwtToken = (email) => {
-        fetch(`http://localhost:5000/jwt?email=${email}`)
+        fetch(`https://doctors-portal-server-delta.vercel.app/jwt?email=${email}`)
         .then(res=>res.json())
         .then(data=>{
             if(data.accesstoken){
