@@ -19,6 +19,10 @@ const DashboardLayout = () => {
                         <li><Link className='mb-2' to='/dashboard'>Dashboard</Link></li>
 
                         <li><Link to='/alluser'>All User</Link></li>
+
+                        <li><Link to='/adddoctor'>Add A Doctor</Link></li>
+
+                        <li><Link to='/managedoctors'>Manage Doctors</Link></li>
                     </ul>
                 </div>
             </div>
