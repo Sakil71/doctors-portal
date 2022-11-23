@@ -1,8 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import ActionModal from '../../Shared/ActionModal/ActionModal';
 
 const ManageDoctors = () => {
-    const { data: managedoctors = [] } = useQuery({
+    const [deletingDoctor, setDeletingDoctor] = useState(null);
+
+    const { data: managedoctors = [], refetch } = useQuery({
         queryKey: ['managedoctors'],
         queryFn: async () => {
             const res = await fetch('https://doctors-portal-server-delta.vercel.app/doctors');
@@ -10,6 +14,24 @@ const ManageDoctors = () => {
             return data;
         }
     })
+
+    const closeModal = () =>{
+        setDeletingDoctor(null);
+    }
+
+    const handleDoctor = doctors =>{
+        fetch(`http://localhost:5000/doctors/${doctors._id}`,{
+            method: "DELETE"
+        })
+        .then(res=> res.json())
+        .then(data=>{
+            if(data.deletedCount > 0){                
+            refetch();
+            toast.success(`Doctor ${doctors?.name} Deleted Successfully`)
+            }
+        })
+    }
+
     return (
         <div>
             <h1 className='text-2xl mt-5'>Manage Doctors</h1>
@@ -30,7 +52,7 @@ const ManageDoctors = () => {
                     <tbody>
                         {
                             managedoctors?.map((doctors, i) => <tr key={doctors._id}>
-                                <th>{i+1}</th>
+                                <th>{i + 1}</th>
                                 <td>
                                     <div className="flex items-center space-x-3">
                                         <div className="avatar">
@@ -44,14 +66,24 @@ const ManageDoctors = () => {
                                 <td>{doctors?.email}</td>
                                 <td>{doctors?.speciality}</td>
 
-                                <th>
-                                    <button className="btn btn-error btn-xs">Delete</button>
-                                </th>
+                                <td>
+                                    <label onClick={()=> setDeletingDoctor(doctors)} htmlFor="action-modal" className="btn btn-error btn-xs">Delete</label>
+                                </td>
                             </tr>)
                         }
                     </tbody>
                 </table>
             </div>
+            {
+                deletingDoctor && <ActionModal
+                title = {`Are you sure you want to delete?`}
+                message ={`If you delete ${deletingDoctor.name}, It can not be undone`}
+                closeModal = {closeModal}
+                successAction = {handleDoctor}
+                modalData = {deletingDoctor}
+                buttonName = "Confirm"
+                ></ActionModal>
+            }
         </div>
     );
 };
